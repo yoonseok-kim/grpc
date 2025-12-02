@@ -43,7 +43,8 @@ class ThreadPool {
 
 // Creates a default thread pool.
 std::shared_ptr<ThreadPool> MakeThreadPool(size_t reserve_threads);
-std::shared_ptr<ThreadPool> MakeThreadPool(size_t reserve_threads, size_t max_thread_count);
+std::shared_ptr<ThreadPool> MakeThreadPool(size_t reserve_threads,
+                                           size_t max_thread_count);
 
 }  // namespace grpc_event_engine::experimental
 
