@@ -168,8 +168,10 @@ thread_local WorkQueue* g_local_queue = nullptr;
 
 // -------- WorkStealingThreadPool --------
 
-WorkStealingThreadPool::WorkStealingThreadPool(size_t reserve_threads, size_t max_thread_count)
-    : pool_{std::make_shared<WorkStealingThreadPoolImpl>(reserve_threads, max_thread_count)} {
+WorkStealingThreadPool::WorkStealingThreadPool(size_t reserve_threads,
+                                               size_t max_thread_count)
+    : pool_{std::make_shared<WorkStealingThreadPoolImpl>(reserve_threads,
+                                                         max_thread_count)} {
   if (g_log_verbose_failures) {
     GRPC_TRACE_LOG(event_engine, INFO)
         << "WorkStealingThreadPool verbose failures are enabled";
@@ -227,7 +229,8 @@ WorkStealingThreadPool::WorkStealingThreadPoolImpl::WorkStealingThreadPoolImpl(
     size_t reserve_threads, size_t max_thread_count)
     : reserve_threads_(reserve_threads),
       max_thread_count_(std::max(max_thread_count, reserve_threads)),
-      current_thread_count_(0), queue_(this) {}
+      current_thread_count_(0),
+      queue_(this) {}
 
 void WorkStealingThreadPool::WorkStealingThreadPoolImpl::Start() {
   for (size_t i = 0; i < reserve_threads_; i++) {
@@ -468,9 +471,9 @@ bool WorkStealingThreadPool::WorkStealingThreadPoolImpl::Lifeguard::
       << living_thread_count + 1;
 
   if (pool_->current_thread_count() < pool_->max_thread_count()) {
-      pool_->StartThread();
-      // Tell the lifeguard to monitor the pool more closely.
-      backoff_.Reset();
+    pool_->StartThread();
+    // Tell the lifeguard to monitor the pool more closely.
+    backoff_.Reset();
   } else {
     GRPC_TRACE_LOG(event_engine, INFO)
         << "Max thread count reached, not starting new thread (current: "
